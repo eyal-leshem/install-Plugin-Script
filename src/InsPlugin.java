@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.security.InvalidKeyException;
@@ -23,6 +24,9 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 
 public class InsPlugin {
 
@@ -36,8 +40,9 @@ public class InsPlugin {
 	 * @throws InvalidKeyException 
 	 * @throws BadPaddingException 
 	 * @throws IllegalBlockSizeException 
+	 * @throws JSONException 
 	 */
-	public static void main(String[] args) throws NoSuchAlgorithmException, IOException, InvalidKeySpecException, NoSuchProviderException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+	public static void main(String[] args) throws NoSuchAlgorithmException, IOException, InvalidKeySpecException, NoSuchProviderException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, JSONException {
 		
 		//mkKey(); 
 		
@@ -54,9 +59,18 @@ public class InsPlugin {
 	
 		/*-----------------------*/
 		String agentPath="C:\\temp\\agentService";
-		String prop="{\"keyStorePath\":\"C:/temp/keyStore/my.keyStore\",\"password\":\"a10097\"}";
-		String jarPath="c:\\temp\\csr\\JksImplemntor.jar";
+		String propFilePath="C:\\temp\\JavaKeyStroePlugin\\conf.cnf";
+		String jarPath="c:\\temp\\JksImplemntor.jar";
 		/*----------------------*/
+		
+		//read properties from file 
+		FileReader 	fr=new FileReader(propFilePath); 
+		char[] 		buffer=new char[(int) new File(propFilePath).length()] ;
+		fr.read(buffer); 
+		String prop=new String(buffer); 
+		
+		//for unwanted endlines
+		prop= new JSONObject(prop).toString();
 		
 		
 		String name=jarPath.substring(jarPath.lastIndexOf("\\")+1,jarPath.lastIndexOf("."));
@@ -64,7 +78,7 @@ public class InsPlugin {
 		File agentNewJar=new File(agentPath+"\\plugins\\"+name+".jar");
 		
 		if(agentNewJar.exists()){
-			System.out.println("already plugin with that name");
+			System.out.println("already plugin file with that name");
 			return;  
 		}
 		
